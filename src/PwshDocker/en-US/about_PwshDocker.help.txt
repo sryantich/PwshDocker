@@ -1,0 +1,68 @@
+TOPIC
+    about_PwshDocker
+
+SHORT DESCRIPTION
+    A native PowerShell module for Docker that talks directly to the Docker
+    Engine API. No docker CLI required.
+
+LONG DESCRIPTION
+    PwshDocker manages Docker engines from PowerShell 7.4+ by speaking the
+    Docker Engine API over a named pipe (Windows), unix socket (Linux/macOS)
+    or TCP/TLS. Commands return rich objects instead of text, support the
+    pipeline, -WhatIf/-Confirm, live tab completion, and run bulk operations
+    in parallel.
+
+    To list every command:
+
+        Get-Command -Module PwshDocker
+
+    To see how docker CLI commands map to PwshDocker commands, see
+    docs/ROADMAP.md in the project repository.
+
+CONNECTING TO AN ENGINE
+    Every command accepts -Context. A value can be:
+
+      - a Docker context name, e.g. 'desktop-linux' (see Get-DockerContext)
+      - an engine URI, e.g. 'npipe:////./pipe/docker_engine',
+        'unix:///var/run/docker.sock' or 'tcp://build01:2376'
+
+    Pass several values to run a command against several engines at once:
+
+        Get-DockerVersion -Context desktop-linux, tcp://build01:2375
+
+    When -Context is omitted, PwshDocker uses (in order):
+
+      1. The session context chosen with Use-DockerContext.
+      2. The DOCKER_HOST environment variable.
+      3. The DOCKER_CONTEXT environment variable.
+      4. The current context in ~/.docker/config.json (docker context use).
+      5. The default engine for the platform.
+
+    PwshDocker reads the same context store (~/.docker/contexts) and config
+    file as the docker CLI, so both tools always agree.
+
+    Use-DockerContext changes the context only for the current PowerShell
+    session. Add -Persist to also make it the docker CLI's current context.
+
+OBJECTS AND ENGINE AFFINITY
+    Every object returned by PwshDocker remembers the engine it came from, in
+    its Context property. When you pipe objects to another PwshDocker command,
+    that command targets the same engine automatically.
+
+PARALLELISM AND CANCELLATION
+    Bulk commands run engine requests concurrently, limited by -ThrottleLimit.
+    Results are written to the pipeline as each request completes. Press
+    Ctrl+C at any time: in-flight requests are cancelled and connections are
+    closed, including long-running streams such as -Follow.
+
+RAW API ACCESS
+    Invoke-DockerApi sends any request to the Engine API and returns the JSON
+    response as objects. It's useful for endpoints that don't have a dedicated
+    command yet.
+
+SEE ALSO
+    Get-DockerContext
+    Use-DockerContext
+    Invoke-DockerApi
+    https://github.com/sryantich/PwshDocker
+    https://docs.docker.com/reference/api/engine/

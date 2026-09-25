@@ -1,0 +1,18 @@
+# Build output
+/out/
+/.build/
+bin/
+obj/
+
+# Test output
+/TestResults/
+testResults.xml
+coverage.xml
+
+# IDE / OS
+.vs/
+.idea/
+*.user
+*.suo
+.DS_Store
+Thumbs.db

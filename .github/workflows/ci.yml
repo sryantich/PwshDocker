@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+
+jobs:
+  build-test:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: PowerShell version
+        shell: pwsh
+        run: $PSVersionTable
+
+      - name: Build, analyze and unit test
+        shell: pwsh
+        run: ./build.ps1 -Task Bootstrap, Build, Analyze, Test -ExcludeTag Integration -CI
+
+      # GitHub's Ubuntu runners ship a Docker engine, so run the live-engine tests there.
+      - name: Integration tests (Linux engine)
+        if: runner.os == 'Linux'
+        shell: pwsh
+        run: ./build.ps1 -Task Test -Tag Integration -CI
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults/
+          if-no-files-found: ignore
