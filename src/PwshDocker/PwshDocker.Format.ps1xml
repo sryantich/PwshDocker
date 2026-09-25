@@ -1,5 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration>
   <ViewDefinitions>
+
+    <!-- Contexts: like `docker context ls` (current context marked with *) -->
+    <View>
+      <Name>PwshDocker.DockerContext</Name>
+      <ViewSelectedBy>
+        <TypeName>PwshDocker.DockerContext</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader><Label>Name</Label></TableColumnHeader>
+          <TableColumnHeader><Label>Description</Label></TableColumnHeader>
+          <TableColumnHeader><Label>DockerHost</Label></TableColumnHeader>
+          <TableColumnHeader><Label>Source</Label></TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><ScriptBlock>if ($_.IsCurrent) { "$($_.Name) *" } else { $_.Name }</ScriptBlock></TableColumnItem>
+              <TableColumnItem><PropertyName>Description</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>DockerHost</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Source</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <!-- Engine test results -->
+    <View>
+      <Name>PwshDocker.DockerEngineTestResult</Name>
+      <ViewSelectedBy>
+        <TypeName>PwshDocker.DockerEngineTestResult</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader><Label>Context</Label></TableColumnHeader>
+          <TableColumnHeader><Label>Reachable</Label></TableColumnHeader>
+          <TableColumnHeader><Label>LatencyMs</Label><Alignment>Right</Alignment></TableColumnHeader>
+          <TableColumnHeader><Label>ApiVersion</Label></TableColumnHeader>
+          <TableColumnHeader><Label>OSType</Label></TableColumnHeader>
+          <TableColumnHeader><Label>Error</Label></TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem><PropertyName>Context</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Reachable</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>LatencyMs</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>NegotiatedApiVersion</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>OSType</PropertyName></TableColumnItem>
+              <TableColumnItem><PropertyName>Error</PropertyName></TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <!-- Version: like `docker version` -->
+    <View>
+      <Name>PwshDocker.DockerVersionInfo</Name>
+      <ViewSelectedBy>
+        <TypeName>PwshDocker.DockerVersionInfo</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Context</PropertyName></ListItem>
+              <ListItem><PropertyName>Endpoint</PropertyName></ListItem>
+              <ListItem><PropertyName>Platform</PropertyName></ListItem>
+              <ListItem><PropertyName>Version</PropertyName></ListItem>
+              <ListItem><PropertyName>ApiVersion</PropertyName></ListItem>
+              <ListItem><PropertyName>MinApiVersion</PropertyName></ListItem>
+              <ListItem><PropertyName>NegotiatedApiVersion</PropertyName></ListItem>
+              <ListItem><Label>OS/Arch</Label><ScriptBlock>"$($_.Os)/$($_.Arch)"</ScriptBlock></ListItem>
+              <ListItem><PropertyName>KernelVersion</PropertyName></ListItem>
+              <ListItem><PropertyName>GoVersion</PropertyName></ListItem>
+              <ListItem><PropertyName>GitCommit</PropertyName></ListItem>
+              <ListItem><PropertyName>BuildTime</PropertyName></ListItem>
+              <ListItem><Label>Components</Label><ScriptBlock>($_.Components | ForEach-Object { "$($_.Name) $($_.Version)" }) -join ', '</ScriptBlock></ListItem>
+              <ListItem><Label>PwshDocker</Label><ScriptBlock>"$($_.ClientVersion) (API $($_.ClientApiVersion))"</ScriptBlock></ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
+    <!-- System info: curated summary of `docker info`; the object carries the full payload -->
+    <View>
+      <Name>PwshDocker.SystemInfo</Name>
+      <ViewSelectedBy>
+        <TypeName>PwshDocker.SystemInfo</TypeName>
+      </ViewSelectedBy>
+      <ListControl>
+        <ListEntries>
+          <ListEntry>
+            <ListItems>
+              <ListItem><PropertyName>Context</PropertyName></ListItem>
+              <ListItem><PropertyName>Name</PropertyName></ListItem>
+              <ListItem><PropertyName>ServerVersion</PropertyName></ListItem>
+              <ListItem><PropertyName>OperatingSystem</PropertyName></ListItem>
+              <ListItem><Label>OS/Arch</Label><ScriptBlock>"$($_.OSType)/$($_.Architecture)"</ScriptBlock></ListItem>
+              <ListItem><PropertyName>KernelVersion</PropertyName></ListItem>
+              <ListItem><Label>CPUs</Label><PropertyName>NCPU</PropertyName></ListItem>
+              <ListItem><Label>Memory</Label><ScriptBlock>[PwshDocker.DockerFormat]::BinarySize($_.MemTotal)</ScriptBlock></ListItem>
+              <ListItem><Label>Containers</Label><ScriptBlock>"$($_.Containers) (running $($_.ContainersRunning), paused $($_.ContainersPaused), stopped $($_.ContainersStopped))"</ScriptBlock></ListItem>
+              <ListItem><PropertyName>Images</PropertyName></ListItem>
+              <ListItem><Label>StorageDriver</Label><PropertyName>Driver</PropertyName></ListItem>
+              <ListItem><Label>LoggingDriver</Label><PropertyName>LoggingDriver</PropertyName></ListItem>
+              <ListItem><Label>Cgroup</Label><ScriptBlock>if ($_.CgroupVersion) { "v$($_.CgroupVersion) ($($_.CgroupDriver))" }</ScriptBlock></ListItem>
+              <ListItem><Label>Swarm</Label><ScriptBlock>$_.Swarm.LocalNodeState</ScriptBlock></ListItem>
+              <ListItem><PropertyName>DockerRootDir</PropertyName></ListItem>
+              <ListItem><Label>Warnings</Label><ScriptBlock>@($_.Warnings).Count</ScriptBlock></ListItem>
+            </ListItems>
+          </ListEntry>
+        </ListEntries>
+      </ListControl>
+    </View>
+
   </ViewDefinitions>
 </Configuration>

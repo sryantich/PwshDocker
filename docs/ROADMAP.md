@@ -45,7 +45,7 @@ so PwshDocker must be *clearly* better than that, not just different:
 
 | Phase | Scope | Status |
 |---|---|---|
-| **0 - Foundation** | Repo, build, CI, analyzer, test harness, docs. C# core: context/endpoint resolution, npipe/unix/tcp/TLS transports, API negotiation, errors, JSON->objects, stream readers, Ctrl+C-aware waits, parallel runner. `Invoke-DockerApi`, `Test-DockerEngine`, `Get-DockerVersion`, `Get-DockerInfo`, `Get-DockerContext`, `Use-DockerContext`. | In progress |
+| **0 - Foundation** | Repo, build, CI, analyzer, test harness, docs. C# core: context/endpoint resolution, npipe/unix/tcp/TLS transports, API negotiation, errors, JSON->objects, stream readers, Ctrl+C-aware waits, parallel runner. `Invoke-DockerApi`, `Test-DockerEngine`, `Get-DockerVersion`, `Get-DockerInfo`, `Get-DockerContext`, `Use-DockerContext`. API tracer dev tool. | Done (tracer pending) |
 | **1 - Containers & images** | Container lifecycle, logs, exec (non-interactive), top, stats, wait (incl. *healthy*), prune. Images: list, pull with progress, remove, tag, history, search, save/load, prune. Registry auth via config + credential helpers. Formats, completers, parallel bulk ops, fan-out. | Planned |
 | **2 - Networks, volumes, system, files, contexts** | Networks, volumes, disk usage, events, system prune, `docker cp` (native tar), export, commit/import, container update, full context management (create/update/rm/export/import), SSH transport. | Planned |
 | **3 - Interactive & build** | `Enter-DockerContainer` (TTY over hijacked connection: raw console, resize, detach keys), stdin for exec, `Build-DockerImage` (`.dockerignore`-aware context streaming; classic builder, then BuildKit `/session` + gRPC), push, `Update-DockerImage`. | Planned |

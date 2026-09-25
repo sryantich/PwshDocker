@@ -42,6 +42,34 @@ cd PwshDocker
 Import-Module ./out/PwshDocker
 ```
 
+## What works today
+
+| Command | Docker CLI equivalent |
+|---|---|
+| `Get-DockerContext` | `docker context ls` / `inspect` / `show` |
+| `Use-DockerContext` | `docker context use` (session-scoped by default; `-Persist` for the CLI) |
+| `Test-DockerEngine` | *(ping)* |
+| `Get-DockerVersion` | `docker version` |
+| `Get-DockerInfo` | `docker info` |
+| `Invoke-DockerApi` | any Engine API endpoint (raw access, including streaming) |
+
+```powershell
+# Which engines do I have, and are they up? (tested in parallel)
+Get-DockerContext | Test-DockerEngine -Detailed
+
+# Version details for every engine at once
+Get-DockerContext | Get-DockerVersion | Format-Table Context, Version, ApiVersion, Os
+
+# Switch engines for this session only (the docker CLI is unaffected)
+Use-DockerContext tcp://build01:2375
+
+# Anything without a dedicated command yet: raw API access with objects back
+Invoke-DockerApi /containers/json -Query @{ all = $true; filters = @{ status = 'exited' } }
+Invoke-DockerApi /events -Stream | Select-Object -First 5
+```
+
+Containers and images are next; see the [roadmap](docs/ROADMAP.md).
+
 ## Documentation
 
 - [Roadmap and CLI parity matrix](docs/ROADMAP.md): every `docker` command and its PwshDocker equivalent

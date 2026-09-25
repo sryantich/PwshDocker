@@ -187,7 +187,8 @@ function Invoke-Test {
         throw 'The module has not been built. Run ./build.ps1 -Task Build first.'
     }
     Use-Dependencies
-    $resultsFile = Join-Path $ResultsDir 'testResults.xml'
+    $suffix = if ($Tag) { '-' + ($Tag -join '-') } elseif ($ExcludeTag) { '-without-' + ($ExcludeTag -join '-') } else { '' }
+    $resultsFile = Join-Path $ResultsDir "testResults$suffix.xml"
     $runner = {
         param($TestsDir, $Tag, $ExcludeTag, $Output, $CI, $ResultsFile)
         $ErrorActionPreference = 'Stop'
